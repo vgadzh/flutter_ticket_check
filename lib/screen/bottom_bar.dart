@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ticket_check/screen/home_screen.dart';
+import 'package:flutter_ticket_check/screen/more_screen.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class BottomBar extends StatefulWidget {
@@ -11,8 +13,9 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   int _selectedIndex = 0;
   static final List<Widget> _widgetOptions = <Widget>[
-    const Text('Home'),
+    const HomeScreen(),
     const Text('Camera'),
+    const MoreScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -44,6 +47,11 @@ class _BottomBarState extends State<BottomBar> {
             icon: Icon(Icons.camera),
             activeIcon: Icon(Icons.camera),
             label: 'Scan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu),
+            activeIcon: Icon(Icons.menu),
+            label: 'More',
           ),
         ],
       ),

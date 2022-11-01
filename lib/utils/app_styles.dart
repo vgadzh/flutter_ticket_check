@@ -10,7 +10,7 @@ class Styles {
   static Color iconsColor = const Color(0xFF979797);
   static Color shadeColor = const Color(0xFFF0F0F0);
 
-  static String fontFamily = 'Roboto';
+  static String fontFamily = 'Inter';
 
   static TextStyle h1 = TextStyle(
     fontSize: 96,
