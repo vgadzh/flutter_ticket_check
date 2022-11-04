@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/screen/home_screen.dart';
 import 'package:flutter_ticket_check/screen/more_screen.dart';
-import 'package:flutter_ticket_check/screen/test_screen.dart';
+import 'package:flutter_ticket_check/screen/scan_screen.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class BottomBar extends StatefulWidget {
@@ -36,23 +36,23 @@ class _BottomBarState extends State<BottomBar> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         unselectedItemColor: Styles.iconsColor,
-        selectedItemColor: Styles.lightColor,
-        backgroundColor: Styles.primaryColor,
+        selectedItemColor: Styles.primaryColor,
+        backgroundColor: Styles.shadeColor,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             activeIcon: Icon(Icons.home_filled),
-            label: 'Home',
+            label: 'О приложении',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera),
             activeIcon: Icon(Icons.camera),
-            label: 'Scan',
+            label: 'Сканировать билет',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu),
             activeIcon: Icon(Icons.menu),
-            label: 'More',
+            label: 'Ещё',
           ),
         ],
       ),

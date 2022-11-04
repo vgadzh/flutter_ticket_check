@@ -60,4 +60,10 @@ class Styles {
     color: darkColor,
     fontFamily: fontFamily,
   );
+  static TextStyle subtitleTextStyle2 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+    color: iconsColor,
+    fontFamily: fontFamily,
+  );
 }
