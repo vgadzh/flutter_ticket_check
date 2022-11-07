@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ticket_check/main.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
+import 'package:flutter_ticket_check/widget/my_app_bar.dart';
 import 'package:flutter_ticket_check/widget/ticket_history_card.dart';
 
 class TicketHistoryScreen extends StatelessWidget {
@@ -9,16 +11,8 @@ class TicketHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Styles.lightColor,
-        foregroundColor: Styles.darkColor,
-        title: Text(
-          'История билета',
-          style: Styles.h6.copyWith(color: Styles.darkColor),
-        ),
-      ),
+      appBar: const MyAppBar(title: 'История билета'),
       body: ListView(padding: const EdgeInsets.all(20), children: [
-        Text(ticketNumber),
         const TicketHistoryCard(
           dateTime: '2022-11-09 12:03:45',
           text: 'Проверка билета. Статус: FAIL, проход запрещен',

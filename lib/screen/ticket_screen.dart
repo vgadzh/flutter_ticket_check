@@ -4,6 +4,7 @@ import 'package:flutter_ticket_check/screen/ticket_history_screen.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/widget/caption_double_text_line.dart';
+import 'package:flutter_ticket_check/widget/my_app_bar.dart';
 
 Icon ticketOkIcon = Icon(
   Icons.check_circle_outline,
@@ -29,13 +30,8 @@ class TicketScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Styles.lightColor,
-        foregroundColor: Styles.darkColor,
-        title: Text(
-          'Проверка билета',
-          style: Styles.h6.copyWith(color: Styles.darkColor),
-        ),
+      appBar: const MyAppBar(
+        title: 'Проверка билета',
       ),
       backgroundColor: Styles.lightColor,
       body: Container(

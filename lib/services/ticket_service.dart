@@ -34,7 +34,7 @@ class TicketService {
       _db = db;
 
       await db.execute(createTicketTable);
-
+      await db.execute(createTicketHistoryTable);
       // await insertDemoTickets();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
@@ -139,6 +139,7 @@ class Ticket {
 
 const dbName = 'tickets.db';
 const ticketTable = 'ticket';
+const ticketHistoryTablet = 'ticket_history';
 const createTicketTable = '''
 CREATE TABLE IF NOT EXISTS "ticket" (
 	"id"	INTEGER,
@@ -147,6 +148,15 @@ CREATE TABLE IF NOT EXISTS "ticket" (
 	"zone_name"	TEXT NOT NULL,
 	"event_name"	TEXT NOT NULL,
 	"event_date"	TEXT NOT NULL,
+	PRIMARY KEY("id")
+);
+''';
+const createTicketHistoryTable = '''
+CREATE TABLE IF NOT EXISTS "ticket_history" (
+	"id"	INTEGER,
+	"ticket_number"	TEXT NOT NULL,
+	"date"	TEXT NOT NULL,
+	"text"	TEXT NOT NULL,
 	PRIMARY KEY("id")
 );
 ''';
