@@ -65,6 +65,12 @@ class TicketService {
     await db.delete(ticketTable);
   }
 
+  Future<void> deleteAllTicketHistory() async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    await db.delete(ticketHistoryTable);
+  }
+
   Future<Ticket> getTicket({required ticketNumber}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
@@ -85,6 +91,18 @@ class TicketService {
     } else {
       return Ticket.fromRow(tickets.first);
     }
+  }
+
+  Future<String> getDbInfo() async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final result = await db.query(
+      'sqlite_master',
+      columns: ['type', 'name'],
+      where: 'type=?',
+      whereArgs: ['table'],
+    );
+    return result.toString();
   }
 
   static String getTicketStatusDescription({required TicketStatus status}) {
@@ -139,7 +157,7 @@ class Ticket {
 
 const dbName = 'tickets.db';
 const ticketTable = 'ticket';
-const ticketHistoryTablet = 'ticket_history';
+const ticketHistoryTable = 'ticket_history';
 const createTicketTable = '''
 CREATE TABLE IF NOT EXISTS "ticket" (
 	"id"	INTEGER,
