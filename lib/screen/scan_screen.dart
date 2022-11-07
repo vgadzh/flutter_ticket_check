@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_ticket_check/screen/ticket_screen.dart';
+import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -57,12 +57,18 @@ class _ScanScreenState extends State<ScanScreen> {
     // } on PlatformException {
     //   barcodeScanRes = 'Failed to get platform version';
     // }
+    final ticketService = TicketService();
+    final Ticket ticket = await ticketService.getTicket(ticketNumber: '11');
+    print(ticket);
+
     if (!mounted) return;
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: ((context) =>
-                const TicketScreen(ticketNumber: '882359087'))));
+            builder: ((context) => TicketScreen(
+                  ticket: ticket,
+                  barcode: '111',
+                ))));
     // setState(() {
     //   _scanBarcode = barcodeScanRes;
     // });

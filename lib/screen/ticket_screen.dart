@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ticket_check/enum/ticket_status.dart';
 import 'package:flutter_ticket_check/screen/ticket_history_screen.dart';
+import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
-import 'package:flutter_ticket_check/widget/captionDoubleTextLine.dart';
+import 'package:flutter_ticket_check/widget/caption_double_text_line.dart';
+
+Icon ticketOkIcon = Icon(
+  Icons.check_circle_outline,
+  size: 64,
+  color: Styles.secondaryColor,
+);
+Icon ticketUsedIcon = Icon(
+  Icons.cancel_outlined,
+  size: 64,
+  color: Styles.accentColor,
+);
+Icon ticketUnknownIcon = Icon(
+  Icons.contact_support_outlined,
+  size: 64,
+  color: Styles.iconsColor,
+);
 
 class TicketScreen extends StatelessWidget {
-  final String ticketNumber;
-  const TicketScreen({super.key, required this.ticketNumber});
+  final Ticket ticket;
+  final String barcode;
+  const TicketScreen({super.key, required this.ticket, required this.barcode});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +75,7 @@ class TicketScreen extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          ticketNumber,
+                          barcode,
                           style: Styles.subtitleTextStyle
                               .copyWith(color: Styles.iconsColor),
                           overflow: TextOverflow.ellipsis,
@@ -93,11 +112,11 @@ class TicketScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.camera,
-                          size: 64,
-                          color: Colors.green,
-                        ),
+                        (ticket.status == TicketStatus.ok)
+                            ? ticketOkIcon
+                            : (ticket.status == TicketStatus.used)
+                                ? ticketUsedIcon
+                                : ticketUnknownIcon,
                         const SizedBox(width: 15),
                         Flexible(
                           child: Column(
@@ -105,13 +124,13 @@ class TicketScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Event name adsfdghfghjgkjhll;qwerqty",
+                                ticket.eventName,
                                 style: Styles.h6,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Event Datetime adsfdghfghjgkjhll;qwerqty',
+                                ticket.eventDate,
                                 style: Styles.bodyTextStyle1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -122,19 +141,20 @@ class TicketScreen extends StatelessWidget {
                     ),
                   ),
                   Divider(thickness: 2, color: Styles.shadeColor),
-                  const CaptionDoubleTextLine(
-                      captionText: 'Номер билета:',
-                      text: 'adsfdghfghjgkjhll;qwerqtysdfsdf'),
+                  CaptionDoubleTextLine(
+                      captionText: 'Номер билета:', text: ticket.number),
                   const SizedBox(height: 5),
-                  const CaptionDoubleTextLine(
-                      captionText: 'Категория:',
-                      text: 'Синяя зона adsfdgh fghjg kjhl l;qwerqtysdfsdf'),
+                  CaptionDoubleTextLine(
+                      captionText: 'Категория:', text: ticket.zoneName),
                   const SizedBox(height: 5),
-                  const CaptionDoubleTextLine(
-                      captionText: 'Статус:', text: 'Проход разрешен'),
+                  CaptionDoubleTextLine(
+                      captionText: 'Статус:',
+                      text: TicketService.getTicketStatusDescription(
+                          status: ticket.status)),
                 ],
               ),
             ),
+            // History button
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -144,7 +164,7 @@ class TicketScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: ((context) => TicketHistoryScreen(
-                                  ticketNumber: ticketNumber))));
+                                  ticketNumber: ticket.number))));
                     },
                     child: Text(
                       'История билета',

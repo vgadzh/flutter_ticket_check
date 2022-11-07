@@ -19,10 +19,10 @@ class HomeScreen extends StatelessWidget {
             'Home Screen (i)',
             style: Styles.h5,
           ),
-          Text('Date'),
-          Text('Events'),
-          Text('Zones'),
-          Text('Tickets'),
+          const Text('Date'),
+          const Text('Events'),
+          const Text('Zones'),
+          const Text('Tickets'),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
