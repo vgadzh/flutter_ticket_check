@@ -88,7 +88,41 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
             text:
                 'Удаление всех билетов и истории сканирования билетов их базы данных',
             textButton: 'Очистить БД',
-            onPressed: () {},
+            onPressed: () async {
+              //delete tickets
+              final deletedTickets = await _ticketService.deleteAllTickets();
+              //delete ticket history
+              final deletedHistoryRecords =
+                  await _ticketService.deleteAllTicketHistory();
+              final message =
+                  'Удалено билетов: $deletedTickets, записей истории: $deletedHistoryRecords';
+              if (!mounted) return;
+              showDialog(
+                  context: context,
+                  builder: ((context) {
+                    return AlertDialog(
+                      title: Text(
+                        'База данных очищена',
+                        style: Styles.bodyTextStyle1
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      content: Text(message, style: Styles.subtitleTextStyle),
+                      actions: [
+                        TextButton(
+                          onPressed: (() {
+                            Navigator.of(context).pop();
+                          }),
+                          child: Text(
+                            'Ok',
+                            style: Styles.bodyTextStyle1.copyWith(
+                              color: Styles.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }));
+            },
           ),
           const SizedBox(height: 20),
           // Fill DB with demo data

@@ -59,7 +59,6 @@ class _ScanScreenState extends State<ScanScreen> {
     // }
     final ticketService = TicketService();
     final Ticket ticket = await ticketService.getTicket(ticketNumber: '11');
-    print(ticket);
 
     if (!mounted) return;
     Navigator.push(
