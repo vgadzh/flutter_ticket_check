@@ -73,6 +73,20 @@ class TicketService {
     return deletedCount;
   }
 
+  Future<int> getTicketCount() async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final tickets = await db.query(ticketTable);
+    return tickets.length;
+  }
+
+  Future<int> getTicketHistoryCount() async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final ticketHistoryRecords = await db.query(ticketHistoryTable);
+    return ticketHistoryRecords.length;
+  }
+
   Future<Ticket> getTicket({required ticketNumber}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();

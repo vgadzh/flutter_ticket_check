@@ -73,12 +73,17 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
             text: 'Будут показаны таблицы в базе данных',
             textButton: 'Показать структуру БД',
             onPressed: () async {
+              final ticketCount = await _ticketService.getTicketCount();
+              final ticketHistoryRecordCount =
+                  await _ticketService.getTicketHistoryCount();
               final text = await _ticketService.getDbInfo();
+              final message =
+                  'tickets: $ticketCount\nticketHistory: $ticketHistoryRecordCount\n$text';
               if (!mounted) return;
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: ((context) => TextInfoScreen(text: text))));
+                      builder: ((context) => TextInfoScreen(text: message))));
             },
           ),
           const SizedBox(height: 20),
@@ -131,7 +136,36 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
             text:
                 'В базу данных будут добавлены несколько билетов с разными статусами для демонстрации работы приложения. Дата события текущая - сегодня.',
             textButton: 'Загрузить демо данные',
-            onPressed: () {},
+            onPressed: () async {
+              await _ticketService.insertDemoTickets();
+              if (!mounted) return;
+              showDialog(
+                  context: context,
+                  builder: ((context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Демо данные',
+                        style: Styles.bodyTextStyle1
+                            .copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      content: Text('Демо данные добавлены в базу данных',
+                          style: Styles.subtitleTextStyle),
+                      actions: [
+                        TextButton(
+                          onPressed: (() {
+                            Navigator.of(context).pop();
+                          }),
+                          child: Text(
+                            'Ok',
+                            style: Styles.bodyTextStyle1.copyWith(
+                              color: Styles.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }));
+            },
           ),
         ],
       ),
