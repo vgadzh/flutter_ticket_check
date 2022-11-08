@@ -18,11 +18,104 @@ class _ScanScreenState extends State<ScanScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       alignment: Alignment.center,
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          Text('Scan result: $_scanBarcode\n'),
+          const SizedBox(height: 40),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              color: Styles.lightColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Styles.shadeColor,
+                  blurRadius: 3,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Режим проверки и гашения билета',
+                  style: Styles.h6,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'В этом режиме производится проверка билета при входе гостя на мероприятие.\nСтатусы билета:',
+                  style: Styles.bodyTextStyle1,
+                ),
+                const SizedBox(height: 10),
+                Column(
+                  children: [
+                    // status ok
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.check_circle_outline,
+                          size: 32,
+                          color: Styles.secondaryColor,
+                        ),
+                        const SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            'Новый билет со статусом ОК. Гость может пройти на мероприятие, билет будет помечен как использованный в базе данных.',
+                            style: Styles.bodyTextStyle1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // status used
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.cancel_outlined,
+                          size: 32,
+                          color: Styles.accentColor,
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            'Использованный билет. Проход по нему уже был выполнен. Повторный проход запрещен',
+                            style: Styles.bodyTextStyle1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // status unknown
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.contact_support_outlined,
+                          size: 32,
+                          color: Styles.iconsColor,
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            'Неизвестный билет. По этому билету в базе данных нет информации.',
+                            style: Styles.bodyTextStyle1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 40),
           SizedBox(
             height: 60,
             width: double.infinity,
@@ -33,7 +126,7 @@ class _ScanScreenState extends State<ScanScreen> {
               onPressed: (() => barcodeScan(context)),
               child: Text(
                 textAlign: TextAlign.center,
-                'Scan Very very very very sdfsafsdf long text',
+                'Сканировать и погасить билет',
                 style: Styles.bodyTextStyle1.copyWith(color: Styles.lightColor),
               ),
             ),
