@@ -5,6 +5,7 @@ import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/widget/caption_double_text_line.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
+import 'package:path/path.dart';
 
 Icon ticketOkIcon = Icon(
   Icons.check_circle_outline,
@@ -23,154 +24,183 @@ Icon ticketUnknownIcon = Icon(
 );
 
 class TicketScreen extends StatelessWidget {
-  final Ticket ticket;
   final String barcode;
-  const TicketScreen({super.key, required this.ticket, required this.barcode});
+  final bool markTicketAsUsed;
+  Ticket? _ticket;
+  TicketScreen(
+      {super.key, required this.barcode, required this.markTicketAsUsed});
+
+  Future<Ticket> getTicket(BuildContext context) async {
+    final ticketService = TicketService();
+    final ticket = await ticketService.getTicket(ticketNumber: barcode);
+    if (markTicketAsUsed) await ticketService.markTicketAsUsed(ticket: ticket);
+    _ticket = ticket;
+    await Future.delayed(const Duration(seconds: 2));
+    return ticket;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(
-        title: 'Проверка билета',
-      ),
+      appBar: MyAppBar(
+          title: markTicketAsUsed
+              ? 'Проверка билета с гашением'
+              : 'Проверка без гашения'),
       backgroundColor: Styles.lightColor,
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Scanning results card
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                color: Styles.shadeColor,
-              ),
-              padding: const EdgeInsets.all(15),
-              height: 72,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.camera,
-                    size: 32,
-                    color: Styles.primaryColor,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Результат сканирования',
-                          style: Styles.bodyTextStyle1,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          barcode,
-                          style: Styles.subtitleTextStyle
-                              .copyWith(color: Styles.iconsColor),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Ticket card
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                color: Styles.lightColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadeColor,
-                    blurRadius: 3,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  // Icon - Event/date line
-                  Flexible(
-                    flex: 3,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        (ticket.status == TicketStatus.ok)
-                            ? ticketOkIcon
-                            : (ticket.status == TicketStatus.used)
-                                ? ticketUsedIcon
-                                : ticketUnknownIcon,
-                        const SizedBox(width: 15),
-                        Flexible(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ticket.eventName,
-                                style: Styles.h6,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                ticket.eventDate,
-                                style: Styles.bodyTextStyle1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+      body: FutureBuilder(
+        future: getTicket(context),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Scanning results card
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        color: Styles.shadeColor,
+                      ),
+                      padding: const EdgeInsets.all(15),
+                      height: 72,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.camera,
+                            size: 32,
+                            color: Styles.primaryColor,
                           ),
-                        )
-                      ],
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Результат сканирования',
+                                  style: Styles.bodyTextStyle1,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  barcode,
+                                  style: Styles.subtitleTextStyle
+                                      .copyWith(color: Styles.iconsColor),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Divider(thickness: 2, color: Styles.shadeColor),
-                  CaptionDoubleTextLine(
-                      captionText: 'Номер билета:', text: ticket.number),
-                  const SizedBox(height: 5),
-                  CaptionDoubleTextLine(
-                      captionText: 'Категория:', text: ticket.zoneName),
-                  const SizedBox(height: 5),
-                  CaptionDoubleTextLine(
-                      captionText: 'Статус:',
-                      text: TicketService.getTicketStatusDescription(
-                          status: ticket.status)),
-                ],
-              ),
-            ),
-            // History button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => TicketHistoryScreen(
-                                  ticketNumber: ticket.number))));
-                    },
-                    child: Text(
-                      'История билета',
-                      style: Styles.subtitleTextStyle
-                          .copyWith(color: Styles.primaryColor),
-                    )),
-              ],
-            )
-          ],
-        ),
+                    const SizedBox(height: 20),
+                    // Ticket card
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        color: Styles.lightColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Styles.shadeColor,
+                            blurRadius: 3,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        children: [
+                          // Icon - Event/date line
+                          Flexible(
+                            flex: 3,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                (_ticket!.status == TicketStatus.ok)
+                                    ? ticketOkIcon
+                                    : (_ticket!.status == TicketStatus.used)
+                                        ? ticketUsedIcon
+                                        : ticketUnknownIcon,
+                                const SizedBox(width: 15),
+                                Flexible(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _ticket!.eventName,
+                                        style: Styles.h6,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        _ticket!.eventDate,
+                                        style: Styles.bodyTextStyle1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Divider(thickness: 2, color: Styles.shadeColor),
+                          CaptionDoubleTextLine(
+                              captionText: 'Номер билета:',
+                              text: _ticket!.number),
+                          const SizedBox(height: 5),
+                          CaptionDoubleTextLine(
+                              captionText: 'Категория:',
+                              text: _ticket!.zoneName),
+                          const SizedBox(height: 5),
+                          CaptionDoubleTextLine(
+                              captionText: 'Статус:',
+                              text: TicketService.getTicketStatusDescription(
+                                  status: _ticket!.status)),
+                        ],
+                      ),
+                    ),
+                    // History button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) =>
+                                          TicketHistoryScreen(
+                                              ticketNumber: _ticket!.number))));
+                            },
+                            child: Text(
+                              'История билета',
+                              style: Styles.subtitleTextStyle
+                                  .copyWith(color: Styles.primaryColor),
+                            )),
+                      ],
+                    )
+                  ],
+                ),
+              );
+
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
