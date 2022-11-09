@@ -91,7 +91,7 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           HeaderTextButtonCard(
             header: 'Очистка БД',
             text:
-                'Удаление всех билетов и истории сканирования билетов их базы данных',
+                'Удаление всех билетов и истории сканирования билетов из базы данных',
             textButton: 'Очистить БД',
             onPressed: () async {
               //delete tickets
@@ -134,7 +134,7 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           HeaderTextButtonCard(
             header: 'Демо данные',
             text:
-                'В базу данных будут добавлены несколько билетов с разными статусами для демонстрации работы приложения. Дата события текущая - сегодня.',
+                'В базу данных будут добавлены несколько билетов с разными статусами для демонстрации работы приложения.',
             textButton: 'Загрузить демо данные',
             onPressed: () async {
               await _ticketService.insertDemoTickets();

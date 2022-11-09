@@ -6,11 +6,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
-
-    print("h=$height w=$width");
-
     return Scaffold(
       backgroundColor: Styles.lightColor,
       body: ListView(
@@ -23,17 +18,6 @@ class HomeScreen extends StatelessWidget {
           const Text('Events'),
           const Text('Zones'),
           const Text('Tickets'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                color: Colors.red,
-                alignment: Alignment.topLeft,
-                width: 100,
-                height: 100,
-              ),
-            ],
-          ),
         ],
       ),
     );

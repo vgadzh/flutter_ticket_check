@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_ticket_check/screen/ticket_screen.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
@@ -139,30 +140,33 @@ class _ScanScreenState extends State<ScanScreen> {
   Future<void> barcodeScan(BuildContext context) async {
     String barcodeScanRes;
 
-    // try {
-    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-    //     '#ff6666',
-    //     'Cancel',
-    //     true,
-    //     ScanMode.QR,
-    //   );
-    //   print('Code: $barcodeScanRes');
-    // } on PlatformException {
-    //   barcodeScanRes = 'Failed to get platform version';
-    // }
-    final ticketService = TicketService();
-    final Ticket ticket = await ticketService.getTicket(ticketNumber: '11');
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666',
+        'Cancel',
+        true,
+        ScanMode.QR,
+      );
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version';
+    }
+    if (barcodeScanRes != '-1') {
+      final ticketService = TicketService();
+      final Ticket ticket =
+          await ticketService.getTicket(ticketNumber: barcodeScanRes);
 
-    if (!mounted) return;
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: ((context) => TicketScreen(
-                  ticket: ticket,
-                  barcode: '111',
-                ))));
-    // setState(() {
-    //   _scanBarcode = barcodeScanRes;
-    // });
+      if (!mounted) return;
+      ticketService.markTicketAsUsed(ticket: ticket);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: ((context) => TicketScreen(
+                    ticket: ticket,
+                    barcode: barcodeScanRes,
+                  ))));
+      // setState(() {
+      //   _scanBarcode = barcodeScanRes;
+      // });
+    }
   }
 }

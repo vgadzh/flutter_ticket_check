@@ -54,9 +54,15 @@ class TicketService {
   }
 
   Future<void> insertDemoTickets() async {
-    await _ensureDbIsOpen();
-    final db = _getDatabaseOrThrow();
-    await db.execute(insertDemoTicketsQuery);
+    demoTickets.forEach((map) async {
+      await insertTicket(
+        number: map['number'],
+        status: map['status'],
+        zoneName: map['zone_name'],
+        eventName: map['event_name'],
+        eventDate: map['event_date'],
+      );
+    });
   }
 
   Future<int> deleteAllTickets() async {
@@ -98,6 +104,7 @@ class TicketService {
     );
     if (tickets.isEmpty) {
       return Ticket(
+        id: -1,
         number: 'Нет данных',
         status: TicketStatus.unknown,
         zoneName: 'Нет данных',
@@ -105,8 +112,66 @@ class TicketService {
         eventDate: 'Нет данных',
       );
     } else {
-      return Ticket.fromRow(tickets.first);
+      final ticket = Ticket.fromRow(tickets.first);
+      final status = ticket.status;
+      insertTicketHistoryRecord(
+        ticketNumber: ticket.number,
+        text: 'Сканирование билета. Статус: $status',
+      );
+      return ticket;
     }
+  }
+
+  Future<int> insertTicket({
+    required String number,
+    required String status,
+    required String zoneName,
+    required String eventName,
+    required String eventDate,
+  }) async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final ticketId = db.insert(ticketTable, {
+      'number': number,
+      'status': status,
+      'zone_name': zoneName,
+      'event_name': eventName,
+      'event_date': eventDate,
+    });
+    insertTicketHistoryRecord(
+      ticketNumber: number,
+      text: 'Билет добавлен в базу занных со статусом: $status',
+    );
+    return ticketId;
+  }
+
+  Future<void> markTicketAsUsed({required Ticket ticket}) async {
+    if (ticket.status == TicketStatus.ok) {
+      await _ensureDbIsOpen();
+      final db = _getDatabaseOrThrow();
+      final updatedCount = await db.update(
+        ticketTable,
+        {'status': 'used'},
+        where: 'id=?',
+        whereArgs: [ticket.id],
+      );
+      insertTicketHistoryRecord(
+        ticketNumber: ticket.number,
+        text: 'Проход разрешен, билет отмечен как использованный',
+      );
+    }
+  }
+
+  Future<void> insertTicketHistoryRecord(
+      {required String ticketNumber, required String text}) async {
+    final date = DateTime.now().toString();
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    db.insert(ticketHistoryTable, {
+      'ticket_number': ticketNumber,
+      'date': date,
+      'text': text,
+    });
   }
 
   Future<String> getDbInfo() async {
@@ -138,7 +203,14 @@ class TicketService {
   }
 }
 
+class TicketHistoryRecord {
+  final String date;
+  final String text;
+  TicketHistoryRecord({required this.date, required this.text});
+}
+
 class Ticket {
+  final int id;
   final String number;
   final TicketStatus status;
   final String zoneName;
@@ -146,6 +218,7 @@ class Ticket {
   final String eventDate;
 
   Ticket({
+    required this.id,
     required this.number,
     required this.status,
     required this.zoneName,
@@ -156,7 +229,8 @@ class Ticket {
   // Example. Row from DB
   //{id: 1, number: 11, status: ok, zone_name: Синяя зона, event_name: Октоберфест, event_date: 2022-11-11}
   Ticket.fromRow(Map<String, Object?> map)
-      : number = map['number'] as String,
+      : id = map['id'] as int,
+        number = map['number'] as String,
         status = (map['status'] as String) == 'ok'
             ? TicketStatus.ok
             : (map['status'] as String) == 'used'
@@ -195,11 +269,40 @@ CREATE TABLE IF NOT EXISTS "ticket_history" (
 );
 ''';
 
-const insertDemoTicketsQuery = '''
-INSERT INTO "main"."ticket"
-("number", "status", "zone_name", "event_name", "event_date")
-VALUES 
-('11', 'ok', 'Синяя зона', 'Октоберфест', '2022-11-11'),
-('22', 'used', 'Синяя зона', 'Октоберфест', '2022-11-11'),
-('33', 'ok', 'Синяя зона', 'Октоберфест', '2022-11-11');
-''';
+const List demoTickets = [
+  {
+    'number': '11',
+    'status': 'ok',
+    'zone_name': 'Синяя зона',
+    'event_name': 'Октоберфест',
+    'event_date': '2022-11-11 12:00:00',
+  },
+  {
+    'number': '12',
+    'status': 'ok',
+    'zone_name': 'Синяя зона',
+    'event_name': 'Октоберфест',
+    'event_date': '2022-11-11 12:00:00',
+  },
+  {
+    'number': '21',
+    'status': 'ok',
+    'zone_name': 'Красная зона',
+    'event_name': 'Октоберфест',
+    'event_date': '2022-11-11 12:00:00',
+  },
+  {
+    'number': '22',
+    'status': 'ok',
+    'zone_name': 'Красная зона',
+    'event_name': 'Октоберфест',
+    'event_date': '2022-11-11 12:00:00',
+  },
+  {
+    'number': '31',
+    'status': 'ok',
+    'zone_name': 'Фиолетовая зона',
+    'event_name': 'The black satellite fest',
+    'event_date': '2022-12-31 20:00:00',
+  },
+];
