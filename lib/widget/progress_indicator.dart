@@ -8,7 +8,7 @@ class MyProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: CircularProgressIndicator(
-      color: Styles.secondaryColor,
+      color: Styles.primaryColor,
     ));
   }
 }

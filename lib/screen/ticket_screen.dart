@@ -36,7 +36,6 @@ class TicketScreen extends StatelessWidget {
     final ticket = await ticketService.getTicket(ticketNumber: barcode);
     if (markTicketAsUsed) await ticketService.markTicketAsUsed(ticket: ticket);
     _ticket = ticket;
-    await Future.delayed(const Duration(seconds: 2));
     return ticket;
   }
 

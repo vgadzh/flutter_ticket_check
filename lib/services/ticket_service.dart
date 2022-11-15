@@ -7,6 +7,10 @@ import 'package:path/path.dart' show join;
 class TicketService {
   Database? _db;
 
+  void dispose() async {
+    await close();
+  }
+
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
@@ -157,7 +161,7 @@ class TicketService {
       );
       insertTicketHistoryRecord(
         ticketNumber: ticket.number,
-        text: 'Проход разрешен, билет отмечен как использованный',
+        text: 'Проход разрешен, билет отмечен как использованный (used)',
       );
     }
   }
@@ -192,11 +196,10 @@ class TicketService {
       {required tickerNumber}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    final records = await db.query(
-      ticketHistoryTable,
-      where: 'ticket_number=?',
-      whereArgs: [tickerNumber],
-    );
+    final records = await db.query(ticketHistoryTable,
+        where: 'ticket_number=?',
+        whereArgs: [tickerNumber],
+        orderBy: 'id DESC');
     return records.map((n) => TicketHistoryRecord.fromRow(n));
   }
 
