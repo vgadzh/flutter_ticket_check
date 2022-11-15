@@ -164,7 +164,9 @@ class TicketService {
 
   Future<void> insertTicketHistoryRecord(
       {required String ticketNumber, required String text}) async {
-    final date = DateTime.now().toString();
+    DateTime now = DateTime.now();
+    final date =
+        '${now.year}-${now.month}-${now.day} ${now.hour}:${now.minute}:${now.second}';
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     db.insert(ticketHistoryTable, {
@@ -184,6 +186,18 @@ class TicketService {
       whereArgs: ['table'],
     );
     return result.toString();
+  }
+
+  Future<Iterable<TicketHistoryRecord>> getTicketHistory(
+      {required tickerNumber}) async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final records = await db.query(
+      ticketHistoryTable,
+      where: 'ticket_number=?',
+      whereArgs: [tickerNumber],
+    );
+    return records.map((n) => TicketHistoryRecord.fromRow(n));
   }
 
   static String getTicketStatusDescription({required TicketStatus status}) {
@@ -207,6 +221,9 @@ class TicketHistoryRecord {
   final String date;
   final String text;
   TicketHistoryRecord({required this.date, required this.text});
+  TicketHistoryRecord.fromRow(Map<String, Object?> map)
+      : date = map['date'] as String,
+        text = map['text'] as String;
 }
 
 class Ticket {

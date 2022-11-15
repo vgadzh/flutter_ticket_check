@@ -5,6 +5,7 @@ import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/widget/caption_double_text_line.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
+import 'package:flutter_ticket_check/widget/progress_indicator.dart';
 import 'package:path/path.dart';
 
 Icon ticketOkIcon = Icon(
@@ -184,7 +185,7 @@ class TicketScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: ((context) =>
                                           TicketHistoryScreen(
-                                              ticketNumber: _ticket!.number))));
+                                              barcode: barcode))));
                             },
                             child: Text(
                               'История билета',
@@ -198,7 +199,7 @@ class TicketScreen extends StatelessWidget {
               );
 
             default:
-              return const Center(child: CircularProgressIndicator());
+              return const MyProgressIndicator();
           }
         },
       ),

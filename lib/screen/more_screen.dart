@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/screen/admin_db_screen.dart';
+import 'package:flutter_ticket_check/screen/ticket_history_screen.dart';
 import 'package:flutter_ticket_check/screen/ticket_screen.dart';
 import 'package:flutter_ticket_check/services/scanner_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
@@ -59,6 +60,19 @@ class _MoreScreenState extends State<MoreScreen> {
                 style: Styles.bodyTextStyle1.copyWith(color: Styles.lightColor),
               ),
             ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) =>
+                          TicketHistoryScreen(barcode: '11'))));
+            },
+            child: Text('TicketHistory',
+                style: Styles.bodyTextStyle1.copyWith(
+                  color: Styles.primaryColor,
+                )),
           ),
         ],
       ),

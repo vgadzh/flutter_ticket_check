@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class TicketHistoryCard extends StatelessWidget {
-  final String dateTime;
+  final String date;
   final String text;
-  const TicketHistoryCard(
-      {super.key, required this.dateTime, required this.text});
+  const TicketHistoryCard({super.key, required this.date, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+        margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
           color: Styles.shadeColor,
@@ -22,7 +22,7 @@ class TicketHistoryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  dateTime,
+                  date,
                   style: Styles.subtitleTextStyle2,
                 ),
               ],
