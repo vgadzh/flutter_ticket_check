@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/screen/text_info_screen.dart';
-import 'package:flutter_ticket_check/services/service_exceptions.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/utils/show_dialog_ok.dart';
 import 'package:flutter_ticket_check/widget/header_text_button_card.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AdminDbScreen extends StatefulWidget {
   const AdminDbScreen({super.key});
@@ -131,6 +131,17 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
                     title: 'Ошибка загрузки демо данных',
                     text: e.toString());
               }
+            },
+          ),
+          const SizedBox(height: 20),
+          HeaderTextButtonCard(
+            header: 'Файл билетов',
+            text:
+                'Экспортировать для отправки и заполнения файл билетов с примером заполнения',
+            textButton: 'Экспорт файла',
+            onPressed: () {
+              Share.shareXFiles([XFile('assets/demo_tickets.json')]);
+              // Share.shareFiles(['assets/demo_tickets.json']);
             },
           ),
         ],
