@@ -1,0 +1,39 @@
+{
+    "tickets":[
+        {
+          "number": "11",
+          "status": "ok",
+          "zone_name": "Синяя зона",
+          "event_name": "Октоберфест",
+          "event_date": "2022-11-11 12:00:00"
+        },
+        {
+          "number": "12",
+          "status": "ok",
+          "zone_name": "Синяя зона",
+          "event_name": "Октоберфест",
+          "event_date": "2022-11-11 12:00:00"
+        },
+        {
+          "number": "21",
+          "status": "ok",
+          "zone_name": "Красная зона",
+          "event_name": "Октоберфест",
+          "event_date": "2022-11-11 12:00:00"
+        },
+        {
+          "number": "22",
+          "status": "ok",
+          "zone_name": "Красная зона",
+          "event_name": "Октоберфест",
+          "event_date": "2022-11-11 12:00:00"
+        },
+        {
+          "number": "31",
+          "status": "ok",
+          "zone_name": "Фиолетовая зона",
+          "event_name": "The black satellite fest",
+          "event_date": "2022-12-31 20:00:00"
+        }
+      ]
+}

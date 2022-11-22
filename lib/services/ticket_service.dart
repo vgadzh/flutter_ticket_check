@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_ticket_check/enum/ticket_status.dart';
 import 'package:flutter_ticket_check/services/service_exceptions.dart';
 import 'package:path_provider/path_provider.dart';
@@ -58,13 +61,21 @@ class TicketService {
   }
 
   Future<void> insertDemoTickets() async {
-    demoTickets.forEach((map) async {
+    final String responce =
+        await rootBundle.loadString('assets/demo_tickets.json');
+    final data = await json.decode(responce);
+    final List tickets = data["tickets"];
+    await insertTicketsFromList(tickets: tickets);
+  }
+
+  Future<void> insertTicketsFromList({required List tickets}) async {
+    tickets.forEach((map) async {
       await insertTicket(
-        number: map['number'],
-        status: map['status'],
-        zoneName: map['zone_name'],
-        eventName: map['event_name'],
-        eventDate: map['event_date'],
+        number: map["number"],
+        status: map["status"],
+        zoneName: map["zone_name"],
+        eventName: map["event_name"],
+        eventDate: map["event_date"],
       );
     });
   }
@@ -289,40 +300,40 @@ CREATE TABLE IF NOT EXISTS "ticket_history" (
 );
 ''';
 
-const List demoTickets = [
-  {
-    'number': '11',
-    'status': 'ok',
-    'zone_name': 'Синяя зона',
-    'event_name': 'Октоберфест',
-    'event_date': '2022-11-11 12:00:00',
-  },
-  {
-    'number': '12',
-    'status': 'ok',
-    'zone_name': 'Синяя зона',
-    'event_name': 'Октоберфест',
-    'event_date': '2022-11-11 12:00:00',
-  },
-  {
-    'number': '21',
-    'status': 'ok',
-    'zone_name': 'Красная зона',
-    'event_name': 'Октоберфест',
-    'event_date': '2022-11-11 12:00:00',
-  },
-  {
-    'number': '22',
-    'status': 'ok',
-    'zone_name': 'Красная зона',
-    'event_name': 'Октоберфест',
-    'event_date': '2022-11-11 12:00:00',
-  },
-  {
-    'number': '31',
-    'status': 'ok',
-    'zone_name': 'Фиолетовая зона',
-    'event_name': 'The black satellite fest',
-    'event_date': '2022-12-31 20:00:00',
-  },
-];
+// const List demoTickets = [
+//   {
+//     'number': '11',
+//     'status': 'ok',
+//     'zone_name': 'Синяя зона',
+//     'event_name': 'Октоберфест',
+//     'event_date': '2022-11-11 12:00:00',
+//   },
+//   {
+//     'number': '12',
+//     'status': 'ok',
+//     'zone_name': 'Синяя зона',
+//     'event_name': 'Октоберфест',
+//     'event_date': '2022-11-11 12:00:00',
+//   },
+//   {
+//     'number': '21',
+//     'status': 'ok',
+//     'zone_name': 'Красная зона',
+//     'event_name': 'Октоберфест',
+//     'event_date': '2022-11-11 12:00:00',
+//   },
+//   {
+//     'number': '22',
+//     'status': 'ok',
+//     'zone_name': 'Красная зона',
+//     'event_name': 'Октоберфест',
+//     'event_date': '2022-11-11 12:00:00',
+//   },
+//   {
+//     'number': '31',
+//     'status': 'ok',
+//     'zone_name': 'Фиолетовая зона',
+//     'event_name': 'The black satellite fest',
+//     'event_date': '2022-12-31 20:00:00',
+//   },
+// ];

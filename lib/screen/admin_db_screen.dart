@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/screen/text_info_screen.dart';
+import 'package:flutter_ticket_check/services/service_exceptions.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
+import 'package:flutter_ticket_check/utils/show_dialog_ok.dart';
 import 'package:flutter_ticket_check/widget/header_text_button_card.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
 
@@ -102,31 +104,10 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
               final message =
                   'Удалено билетов: $deletedTickets, записей истории: $deletedHistoryRecords';
               if (!mounted) return;
-              showDialog(
+              showDialogOk(
                   context: context,
-                  builder: ((context) {
-                    return AlertDialog(
-                      title: Text(
-                        'База данных очищена',
-                        style: Styles.bodyTextStyle1
-                            .copyWith(fontWeight: FontWeight.w500),
-                      ),
-                      content: Text(message, style: Styles.subtitleTextStyle),
-                      actions: [
-                        TextButton(
-                          onPressed: (() {
-                            Navigator.of(context).pop();
-                          }),
-                          child: Text(
-                            'Ok',
-                            style: Styles.bodyTextStyle1.copyWith(
-                              color: Styles.primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }));
+                  title: 'База данных очищена',
+                  text: message);
             },
           ),
           const SizedBox(height: 20),
@@ -137,34 +118,19 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
                 'В базу данных будут добавлены несколько билетов с разными статусами для демонстрации работы приложения.',
             textButton: 'Загрузить демо данные',
             onPressed: () async {
-              await _ticketService.insertDemoTickets();
-              if (!mounted) return;
-              showDialog(
-                  context: context,
-                  builder: ((context) {
-                    return AlertDialog(
-                      title: Text(
-                        'Демо данные',
-                        style: Styles.bodyTextStyle1
-                            .copyWith(fontWeight: FontWeight.w500),
-                      ),
-                      content: Text('Демо данные добавлены в базу данных',
-                          style: Styles.subtitleTextStyle),
-                      actions: [
-                        TextButton(
-                          onPressed: (() {
-                            Navigator.of(context).pop();
-                          }),
-                          child: Text(
-                            'Ok',
-                            style: Styles.bodyTextStyle1.copyWith(
-                              color: Styles.primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }));
+              try {
+                await _ticketService.insertDemoTickets();
+                if (!mounted) return;
+                showDialogOk(
+                    context: context,
+                    title: 'Демо данные',
+                    text: 'Демо билеты успешно добавлены в базу данных');
+              } catch (e) {
+                showDialogOk(
+                    context: context,
+                    title: 'Ошибка загрузки демо данных',
+                    text: e.toString());
+              }
             },
           ),
         ],
