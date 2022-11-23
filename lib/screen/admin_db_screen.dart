@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ticket_check/screen/text_info_screen.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/utils/show_dialog_ok.dart';
 import 'package:flutter_ticket_check/widget/header_text_button_card.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class AdminDbScreen extends StatefulWidget {
@@ -135,15 +139,49 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           ),
           const SizedBox(height: 20),
           HeaderTextButtonCard(
-            header: 'Файл билетов',
+            header: 'Файл билетов JSON',
             text:
-                'Экспортировать для отправки и заполнения файл билетов с примером заполнения',
-            textButton: 'Экспорт файла',
-            onPressed: () {
-              Share.shareXFiles([XFile('assets/demo_tickets.json')]);
-              // Share.shareFiles(['assets/demo_tickets.json']);
+                'Экспортировать файл билетов JSON с примером заполнения. Этот файл можно использовать для импорта билетов',
+            textButton: 'Экспорт JSON',
+            onPressed: () async {
+              final data = await rootBundle.load('assets/demo_tickets.json');
+              final buffer = data.buffer;
+              await Share.shareXFiles([
+                XFile.fromData(
+                  buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+                  name: 'tickets.json',
+                  mimeType: 'application/json',
+                ),
+              ]);
             },
           ),
+          // const SizedBox(height: 20),
+          // HeaderTextButtonCard(
+          //   header: 'Файл базы данных',
+          //   text:
+          //       'Экспортировать файл базы данных Sqlite DB для проверки работы приложения и диагностики проблем',
+          //   textButton: 'Экспорт DB',
+          //   onPressed: () async {
+          //     final ticketService = TicketService();
+          //     final dbPath = await ticketService.getDbPath();
+          //     print(dbPath);
+          //     if (dbPath != null) {
+          //       final file = File(dbPath);
+
+          //       final bytes = await file.readAsBytes();
+          //       await Share.shareXFiles([
+          //         XFile.fromData(
+          //           bytes,
+          //           name: 'tickets.db',
+          //         ),
+          //       ]);
+          //     }
+
+          //     // ticketService.dispose();
+
+          //     if (dbPath != null) {}
+          //   },
+          // ),
         ],
       ),
     );

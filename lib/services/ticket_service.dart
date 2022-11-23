@@ -30,6 +30,17 @@ class TicketService {
     }
   }
 
+  Future<String?> getDbPath() async {
+    String? dbPath;
+    try {
+      final docsPath = await getApplicationDocumentsDirectory();
+      dbPath = join(docsPath.path, dbName);
+    } catch (e) {
+      print(e.toString());
+    }
+    return dbPath;
+  }
+
   Future<void> open() async {
     if (_db != null) {
       throw DatabaseAlreadyOpenException();
