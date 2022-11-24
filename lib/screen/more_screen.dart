@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/screen/admin_db_screen.dart';
 import 'package:flutter_ticket_check/screen/ticket_history_screen.dart';
@@ -83,6 +87,39 @@ class _MoreScreenState extends State<MoreScreen> {
                           TicketHistoryScreen(barcode: 'all'))));
             },
             child: Text('TicketHistory all',
+                style: Styles.bodyTextStyle1.copyWith(
+                  color: Styles.primaryColor,
+                )),
+          ),
+          TextButton(
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: [
+                  'json',
+                ],
+              );
+              // print(result);
+              if (result != null) {
+                final path = result.files.single.path;
+                if (path != null) {
+                  final File file = File(path);
+                  final source = file.readAsStringSync();
+                  final data = json.decode(source);
+                  print(data);
+                }
+              }
+            },
+            child: Text('open file tests',
+                style: Styles.bodyTextStyle1.copyWith(
+                  color: Styles.primaryColor,
+                )),
+          ),
+          TextButton(
+            onPressed: () async {
+              await barcodeScan(context);
+            },
+            child: Text('Проверка без гашения',
                 style: Styles.bodyTextStyle1.copyWith(
                   color: Styles.primaryColor,
                 )),
