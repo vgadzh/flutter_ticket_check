@@ -95,6 +95,12 @@ class TicketService {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(ticketTable);
+
+    await insertTicketHistoryRecord(
+      ticketNumber: 'all',
+      text: 'Удаление всех билетов из БД',
+    );
+
     return deletedCount;
   }
 
@@ -140,7 +146,7 @@ class TicketService {
     } else {
       final ticket = Ticket.fromRow(tickets.first);
       final status = ticket.status;
-      insertTicketHistoryRecord(
+      await insertTicketHistoryRecord(
         ticketNumber: ticket.number,
         text: 'Сканирование билета. Статус: $status',
       );
@@ -164,7 +170,7 @@ class TicketService {
       'event_name': eventName,
       'event_date': eventDate,
     });
-    insertTicketHistoryRecord(
+    await insertTicketHistoryRecord(
       ticketNumber: number,
       text: 'Билет добавлен в базу занных со статусом: $status',
     );
@@ -181,7 +187,7 @@ class TicketService {
         where: 'id=?',
         whereArgs: [ticket.id],
       );
-      insertTicketHistoryRecord(
+      await insertTicketHistoryRecord(
         ticketNumber: ticket.number,
         text: 'Проход разрешен, билет отмечен как использованный (used)',
       );
@@ -215,13 +221,20 @@ class TicketService {
   }
 
   Future<Iterable<TicketHistoryRecord>> getTicketHistory(
-      {required tickerNumber}) async {
+      {required ticketNumber}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final records = await db.query(ticketHistoryTable,
         where: 'ticket_number=?',
-        whereArgs: [tickerNumber],
+        whereArgs: [ticketNumber],
         orderBy: 'id DESC');
+    return records.map((n) => TicketHistoryRecord.fromRow(n));
+  }
+
+  Future<Iterable<TicketHistoryRecord>> getAllTicketsHistoryRecords() async {
+    await _ensureDbIsOpen();
+    final db = _getDatabaseOrThrow();
+    final records = await db.query(ticketHistoryTable, orderBy: 'id DESC');
     return records.map((n) => TicketHistoryRecord.fromRow(n));
   }
 
@@ -243,12 +256,15 @@ class TicketService {
 }
 
 class TicketHistoryRecord {
+  final String ticketNumber;
   final String date;
   final String text;
-  TicketHistoryRecord({required this.date, required this.text});
+  TicketHistoryRecord(this.ticketNumber,
+      {required this.date, required this.text});
   TicketHistoryRecord.fromRow(Map<String, Object?> map)
       : date = map['date'] as String,
-        text = map['text'] as String;
+        text = map['text'] as String,
+        ticketNumber = map['ticket_number'] as String;
 }
 
 class Ticket {

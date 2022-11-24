@@ -39,8 +39,16 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-                color: Styles.shadeColor,
-                borderRadius: const BorderRadius.all(Radius.circular(8))),
+              color: Styles.shadeColor,
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Styles.iconsColor,
+                  blurRadius: 3,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Icon(
@@ -96,17 +104,12 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           // Clean ticket DB
           HeaderTextButtonCard(
             header: 'Очистка БД',
-            text:
-                'Удаление всех билетов и истории сканирования билетов из базы данных',
+            text: 'Удаление всех билетов из базы данных',
             textButton: 'Очистить БД',
             onPressed: () async {
               //delete tickets
               final deletedTickets = await _ticketService.deleteAllTickets();
-              //delete ticket history
-              final deletedHistoryRecords =
-                  await _ticketService.deleteAllTicketHistory();
-              final message =
-                  'Удалено билетов: $deletedTickets, записей истории: $deletedHistoryRecords';
+              final message = 'Удалено билетов: $deletedTickets';
               if (!mounted) return;
               showDialogOk(
                   context: context,
@@ -139,7 +142,7 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           ),
           const SizedBox(height: 20),
           HeaderTextButtonCard(
-            header: 'Файл билетов JSON',
+            header: 'Экспорт шаблона JSON',
             text:
                 'Экспортировать файл билетов JSON с примером заполнения. Этот файл можно использовать для импорта билетов',
             textButton: 'Экспорт JSON',
@@ -155,33 +158,6 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
               ]);
             },
           ),
-          // const SizedBox(height: 20),
-          // HeaderTextButtonCard(
-          //   header: 'Файл базы данных',
-          //   text:
-          //       'Экспортировать файл базы данных Sqlite DB для проверки работы приложения и диагностики проблем',
-          //   textButton: 'Экспорт DB',
-          //   onPressed: () async {
-          //     final ticketService = TicketService();
-          //     final dbPath = await ticketService.getDbPath();
-          //     print(dbPath);
-          //     if (dbPath != null) {
-          //       final file = File(dbPath);
-
-          //       final bytes = await file.readAsBytes();
-          //       await Share.shareXFiles([
-          //         XFile.fromData(
-          //           bytes,
-          //           name: 'tickets.db',
-          //         ),
-          //       ]);
-          //     }
-
-          //     // ticketService.dispose();
-
-          //     if (dbPath != null) {}
-          //   },
-          // ),
         ],
       ),
     );

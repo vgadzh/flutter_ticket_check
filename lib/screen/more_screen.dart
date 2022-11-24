@@ -69,7 +69,20 @@ class _MoreScreenState extends State<MoreScreen> {
                       builder: ((context) =>
                           TicketHistoryScreen(barcode: '11'))));
             },
-            child: Text('TicketHistory',
+            child: Text('TicketHistory 11',
+                style: Styles.bodyTextStyle1.copyWith(
+                  color: Styles.primaryColor,
+                )),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) =>
+                          TicketHistoryScreen(barcode: 'all'))));
+            },
+            child: Text('TicketHistory all',
                 style: Styles.bodyTextStyle1.copyWith(
                   color: Styles.primaryColor,
                 )),

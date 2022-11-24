@@ -12,8 +12,9 @@ class TicketHistoryScreen extends StatelessWidget {
 
   Future getTicketHistory({required barcode}) async {
     final ticketService = TicketService();
-    final ticketHistory =
-        await ticketService.getTicketHistory(tickerNumber: barcode);
+    final ticketHistory = (barcode != 'all')
+        ? await ticketService.getTicketHistory(ticketNumber: barcode)
+        : await ticketService.getAllTicketsHistoryRecords();
     _ticketHistory = ticketHistory.toList();
     // await Future.delayed(const Duration(seconds: 10));
   }
@@ -21,7 +22,8 @@ class TicketHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(title: 'История билета'),
+      appBar:
+          MyAppBar(title: (barcode != 'all') ? 'История билета' : 'История'),
       body: FutureBuilder(
         future: getTicketHistory(barcode: barcode),
         builder: (context, snapshot) {
@@ -32,8 +34,10 @@ class TicketHistoryScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final ticketHistoryRecord = _ticketHistory[index];
                   return TicketHistoryCard(
-                      date: ticketHistoryRecord.date,
-                      text: ticketHistoryRecord.text);
+                    date: ticketHistoryRecord.date,
+                    text: ticketHistoryRecord.text,
+                    ticketNumber: ticketHistoryRecord.ticketNumber,
+                  );
                 },
               );
             default:

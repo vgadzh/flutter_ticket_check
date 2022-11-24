@@ -63,7 +63,7 @@ class Styles {
   static TextStyle subtitleTextStyle2 = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.normal,
-    color: iconsColor,
+    color: darkColor,
     fontFamily: fontFamily,
   );
 }
