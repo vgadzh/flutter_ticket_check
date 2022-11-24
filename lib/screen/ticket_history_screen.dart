@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
-
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
 import 'package:flutter_ticket_check/widget/progress_indicator.dart';
 import 'package:flutter_ticket_check/widget/ticket_history_card.dart';
 
 class TicketHistoryScreen extends StatelessWidget {
   final String barcode;
-  List<TicketHistoryRecord> _ticketHistory = [];
+  late final List<TicketHistoryRecord> _ticketHistory;
   TicketHistoryScreen({super.key, required this.barcode});
 
   Future getTicketHistory({required barcode}) async {

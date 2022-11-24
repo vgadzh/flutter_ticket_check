@@ -6,7 +6,6 @@ import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/widget/caption_double_text_line.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
 import 'package:flutter_ticket_check/widget/progress_indicator.dart';
-import 'package:path/path.dart';
 
 Icon ticketOkIcon = Icon(
   Icons.check_circle_outline,
@@ -27,7 +26,7 @@ Icon ticketUnknownIcon = Icon(
 class TicketScreen extends StatelessWidget {
   final String barcode;
   final bool markTicketAsUsed;
-  Ticket? _ticket;
+  late final Ticket? _ticket;
   TicketScreen(
       {super.key, required this.barcode, required this.markTicketAsUsed});
 

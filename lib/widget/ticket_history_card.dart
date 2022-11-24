@@ -47,7 +47,7 @@ class TicketHistoryCard extends StatelessWidget {
                   child: Text(
                     "Билет:$ticketNumber\n$text",
                     style: Styles.subtitleTextStyle,
-                    maxLines: 3,
+                    maxLines: 7,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

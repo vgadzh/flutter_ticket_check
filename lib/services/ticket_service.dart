@@ -154,34 +154,40 @@ class TicketService {
     }
   }
 
-  Future<int> insertTicket({
+  Future<void> insertTicket({
     required String number,
     required String status,
     required String zoneName,
     required String eventName,
     required String eventDate,
   }) async {
-    await _ensureDbIsOpen();
-    final db = _getDatabaseOrThrow();
-    final ticketId = db.insert(ticketTable, {
-      'number': number,
-      'status': status,
-      'zone_name': zoneName,
-      'event_name': eventName,
-      'event_date': eventDate,
-    });
-    await insertTicketHistoryRecord(
-      ticketNumber: number,
-      text: 'Билет добавлен в базу занных со статусом: $status',
-    );
-    return ticketId;
+    try {
+      await _ensureDbIsOpen();
+      final db = _getDatabaseOrThrow();
+      await db.insert(ticketTable, {
+        'number': number,
+        'status': status,
+        'zone_name': zoneName,
+        'event_name': eventName,
+        'event_date': eventDate,
+      });
+      await insertTicketHistoryRecord(
+        ticketNumber: number,
+        text: 'Билет добавлен в базу занных со статусом: $status',
+      );
+    } catch (e) {
+      await insertTicketHistoryRecord(
+        ticketNumber: number,
+        text: 'Ошибка добавления в БД: ${e.toString()}',
+      );
+    }
   }
 
   Future<void> markTicketAsUsed({required Ticket ticket}) async {
     if (ticket.status == TicketStatus.ok) {
       await _ensureDbIsOpen();
       final db = _getDatabaseOrThrow();
-      final updatedCount = await db.update(
+      await db.update(
         ticketTable,
         {'status': 'used'},
         where: 'id=?',
@@ -201,23 +207,11 @@ class TicketService {
         '${now.year}-${now.month}-${now.day} ${now.hour}:${now.minute}:${now.second}';
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    db.insert(ticketHistoryTable, {
+    await db.insert(ticketHistoryTable, {
       'ticket_number': ticketNumber,
       'date': date,
       'text': text,
     });
-  }
-
-  Future<String> getDbInfo() async {
-    await _ensureDbIsOpen();
-    final db = _getDatabaseOrThrow();
-    final result = await db.query(
-      'sqlite_master',
-      columns: ['type', 'name'],
-      where: 'type=?',
-      whereArgs: ['table'],
-    );
-    return result.toString();
   }
 
   Future<Iterable<TicketHistoryRecord>> getTicketHistory(
@@ -234,7 +228,10 @@ class TicketService {
   Future<Iterable<TicketHistoryRecord>> getAllTicketsHistoryRecords() async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    final records = await db.query(ticketHistoryTable, orderBy: 'id DESC');
+    final records = await db.query(
+      ticketHistoryTable,
+      orderBy: 'id DESC',
+    );
     return records.map((n) => TicketHistoryRecord.fromRow(n));
   }
 

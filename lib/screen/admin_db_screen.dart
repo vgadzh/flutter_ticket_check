@@ -1,14 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_ticket_check/screen/text_info_screen.dart';
 import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 import 'package:flutter_ticket_check/utils/show_dialog_ok.dart';
 import 'package:flutter_ticket_check/widget/header_text_button_card.dart';
 import 'package:flutter_ticket_check/widget/my_app_bar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class AdminDbScreen extends StatefulWidget {
@@ -83,33 +83,49 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
           // Admin functions
           //Show DB tables
           HeaderTextButtonCard(
-            header: 'Структура БД',
-            text: 'Будут показаны таблицы в базе данных',
-            textButton: 'Показать структуру БД',
+            header: 'Содержимое БД',
+            text:
+                'Проверка количества билетов и количества записей истории изменения статуса билетов',
+            textButton: 'Показать содержимое БД',
             onPressed: () async {
               final ticketCount = await _ticketService.getTicketCount();
               final ticketHistoryRecordCount =
                   await _ticketService.getTicketHistoryCount();
-              final text = await _ticketService.getDbInfo();
               final message =
-                  'tickets: $ticketCount\nticketHistory: $ticketHistoryRecordCount\n$text';
+                  'Билетов: $ticketCount\nЗаписей истории: $ticketHistoryRecordCount';
               if (!mounted) return;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => TextInfoScreen(text: message))));
+              showDialogOk(
+                  context: context, title: 'Содержимое БД', text: message);
             },
           ),
           const SizedBox(height: 20),
           // Clean ticket DB
           HeaderTextButtonCard(
-            header: 'Очистка БД',
-            text: 'Удаление всех билетов из базы данных',
-            textButton: 'Очистить БД',
+            header: 'Удаление билетов',
+            text: 'Внимание! Все билеты будут удалены из базы данных',
+            textButton: 'Удалить билеты',
             onPressed: () async {
               //delete tickets
               final deletedTickets = await _ticketService.deleteAllTickets();
               final message = 'Удалено билетов: $deletedTickets';
+              if (!mounted) return;
+              showDialogOk(
+                  context: context,
+                  title: 'База данных очищена',
+                  text: message);
+            },
+          ),
+          const SizedBox(height: 20),
+          // Clean ticket DB
+          HeaderTextButtonCard(
+            header: 'Удаление истории',
+            text:
+                'Внимание! Вся история сканирования и изменения статусов билетов будет удалена из базы данных',
+            textButton: 'Удалить историю',
+            onPressed: () async {
+              final deletedCount =
+                  await _ticketService.deleteAllTicketHistory();
+              final message = 'Удалено записей истории: $deletedCount';
               if (!mounted) return;
               showDialogOk(
                   context: context,
@@ -156,6 +172,45 @@ class _AdminDbScreenState extends State<AdminDbScreen> {
                   mimeType: 'application/json',
                 ),
               ]);
+            },
+          ),
+          const SizedBox(height: 20),
+          HeaderTextButtonCard(
+            header: 'Импорт из JSON',
+            text: 'Импорт билетов из файла JSON',
+            textButton: 'Импорт из JSON',
+            onPressed: () async {
+              try {
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles();
+                if (result != null) {
+                  final path = result.files.single.path;
+                  if (path != null) {
+                    final File file = File(path);
+                    final source = file.readAsStringSync();
+                    final data = json.decode(source);
+                    final List tickets = data['tickets'];
+                    final ticketService = TicketService();
+                    final ticketCountBefore =
+                        await ticketService.getTicketCount();
+                    await ticketService.insertTicketsFromList(tickets: tickets);
+                    final ticketCountAfter =
+                        await ticketService.getTicketCount();
+
+                    final message =
+                        "JSON файл содержит: ${tickets.length} билетов,\nдобавлено в базу данных: ${ticketCountAfter - ticketCountBefore} билетов";
+                    showDialogOk(
+                        context: context,
+                        title: 'Загрузка JSON файла',
+                        text: message);
+                  }
+                }
+              } catch (e) {
+                showDialogOk(
+                    context: context,
+                    title: 'Ошибка обработки JSON файла',
+                    text: e.toString());
+              }
             },
           ),
         ],

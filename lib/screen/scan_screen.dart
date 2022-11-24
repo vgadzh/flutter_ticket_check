@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_ticket_check/screen/ticket_screen.dart';
 import 'package:flutter_ticket_check/screen/ticket_screen.dart';
 import 'package:flutter_ticket_check/services/scanner_service.dart';
-import 'package:flutter_ticket_check/services/ticket_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -15,7 +11,6 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  String _scanBarcode = 'Unknown';
   @override
   Widget build(BuildContext context) {
     return Container(
