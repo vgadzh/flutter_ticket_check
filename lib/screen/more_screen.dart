@@ -50,21 +50,6 @@ class _MoreScreenState extends State<MoreScreen> {
                   color: Styles.primaryColor,
                 )),
           ),
-          SizedBox(
-            height: 60,
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Styles.primaryColor,
-              ),
-              onPressed: (() => barcodeScan(context)),
-              child: Text(
-                textAlign: TextAlign.center,
-                'Проверка без гашения',
-                style: Styles.bodyTextStyle1.copyWith(color: Styles.lightColor),
-              ),
-            ),
-          ),
           TextButton(
             onPressed: () {
               Navigator.push(
@@ -93,12 +78,7 @@ class _MoreScreenState extends State<MoreScreen> {
           ),
           TextButton(
             onPressed: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: [
-                  'json',
-                ],
-              );
+              FilePickerResult? result = await FilePicker.platform.pickFiles();
               // print(result);
               if (result != null) {
                 final path = result.files.single.path;
