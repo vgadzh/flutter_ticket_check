@@ -3,9 +3,11 @@ import 'package:flutter_ticket_check/utils/app_styles.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final List<Widget>? actions;
   const MyAppBar({
     Key? key,
     required this.title,
+    this.actions = const [],
   }) : super(key: key);
 
   @override
@@ -20,6 +22,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: Styles.h6.copyWith(color: Styles.darkColor),
       ),
+      actions: actions,
     );
   }
 }

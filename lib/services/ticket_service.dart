@@ -47,7 +47,8 @@ class TicketService {
     }
     try {
       final docsPath = await getApplicationDocumentsDirectory();
-      final dbPath = join(docsPath.path, dbName);
+      // final dbPath = join(docsPath.path, dbName);
+      final dbPath = "${docsPath.path}/$dbName";
       final db = await openDatabase(dbPath);
       _db = db;
 
@@ -235,6 +236,16 @@ class TicketService {
     return records.map((n) => TicketHistoryRecord.fromRow(n));
   }
 
+  static String getTicketsHistoryCsv(
+      {required List<TicketHistoryRecord> ticketHistoryRecords}) {
+    String ticketHistoryCsv = TicketHistoryRecord.csvHeader();
+    ticketHistoryCsv += '\n';
+    ticketHistoryRecords.forEach((element) {
+      ticketHistoryCsv += element.toString() + "\n";
+    });
+    return ticketHistoryCsv;
+  }
+
   static String getTicketStatusDescription({required TicketStatus status}) {
     String description = 'Неизвестный статус билета';
     switch (status) {
@@ -266,8 +277,9 @@ class TicketHistoryRecord {
         ticketNumber = map['ticket_number'] as String;
 
   @override
-  String toString() =>
-      "id: $id | ticket_number: $ticketNumber | date: $date | text: $text";
+  String toString() => "$id|$ticketNumber|$date|$text";
+
+  static String csvHeader() => "id|ticket_number|date|text";
 }
 
 class Ticket {

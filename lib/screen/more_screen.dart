@@ -83,23 +83,6 @@ class _MoreScreenState extends State<MoreScreen> {
                   color: Styles.primaryColor,
                 )),
           ),
-          TextButton(
-            onPressed: () async {
-              final data = await rootBundle.load('assets/sample.csv');
-              final buffer = data.buffer;
-              await Share.shareXFiles([
-                XFile.fromData(
-                  buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
-                  name: 'history.scv',
-                  mimeType: 'text/csv',
-                ),
-              ]);
-            },
-            child: Text('CSV test',
-                style: Styles.bodyTextStyle1.copyWith(
-                  color: Styles.primaryColor,
-                )),
-          ),
         ],
       ),
     );
