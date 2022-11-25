@@ -1,0 +1,3 @@
+id|ticket_number|date|text
+6|11|2022-11-24 16:17:25|Ошибка добавления в БД: DatabaseException(Error Domain=FMDatabase Code=2067 "UNIQUE constraint failed: ticket.number" UserInfo={NSLocalizedDescription=UNIQUE constraint failed: ticket.number}) sql 'INSERT INTO ticket (number, status, zone_name, event_name, event_date) VALUES (?, ?, ?, ?, ?)' args [11, ok, Синяя зона, Октоберфест, 2022-11-11 12:00:00]
+1|11|2022-11-24 16:15:52|Билет добавлен в базу занных со статусом: ok

@@ -253,15 +253,21 @@ class TicketService {
 }
 
 class TicketHistoryRecord {
+  final int id;
   final String ticketNumber;
   final String date;
   final String text;
-  TicketHistoryRecord(this.ticketNumber,
+  TicketHistoryRecord(this.ticketNumber, this.id,
       {required this.date, required this.text});
   TicketHistoryRecord.fromRow(Map<String, Object?> map)
-      : date = map['date'] as String,
+      : id = map['id'] as int,
+        date = map['date'] as String,
         text = map['text'] as String,
         ticketNumber = map['ticket_number'] as String;
+
+  @override
+  String toString() =>
+      "id: $id | ticket_number: $ticketNumber | date: $date | text: $text";
 }
 
 class Ticket {
@@ -323,41 +329,3 @@ CREATE TABLE IF NOT EXISTS "ticket_history" (
 	PRIMARY KEY("id")
 );
 ''';
-
-// const List demoTickets = [
-//   {
-//     'number': '11',
-//     'status': 'ok',
-//     'zone_name': 'Синяя зона',
-//     'event_name': 'Октоберфест',
-//     'event_date': '2022-11-11 12:00:00',
-//   },
-//   {
-//     'number': '12',
-//     'status': 'ok',
-//     'zone_name': 'Синяя зона',
-//     'event_name': 'Октоберфест',
-//     'event_date': '2022-11-11 12:00:00',
-//   },
-//   {
-//     'number': '21',
-//     'status': 'ok',
-//     'zone_name': 'Красная зона',
-//     'event_name': 'Октоберфест',
-//     'event_date': '2022-11-11 12:00:00',
-//   },
-//   {
-//     'number': '22',
-//     'status': 'ok',
-//     'zone_name': 'Красная зона',
-//     'event_name': 'Октоберфест',
-//     'event_date': '2022-11-11 12:00:00',
-//   },
-//   {
-//     'number': '31',
-//     'status': 'ok',
-//     'zone_name': 'Фиолетовая зона',
-//     'event_name': 'The black satellite fest',
-//     'event_date': '2022-12-31 20:00:00',
-//   },
-// ];

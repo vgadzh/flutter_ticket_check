@@ -15,6 +15,7 @@ class TicketHistoryScreen extends StatelessWidget {
         ? await ticketService.getTicketHistory(ticketNumber: barcode)
         : await ticketService.getAllTicketsHistoryRecords();
     _ticketHistory = ticketHistory.toList();
+    // print(_ticketHistory);
     // await Future.delayed(const Duration(seconds: 10));
   }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ticket_check/screen/admin_db_screen.dart';
 import 'package:flutter_ticket_check/screen/ticket_history_screen.dart';
 import 'package:flutter_ticket_check/screen/ticket_screen.dart';
 import 'package:flutter_ticket_check/services/scanner_service.dart';
 import 'package:flutter_ticket_check/utils/app_styles.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({super.key});
@@ -77,6 +79,23 @@ class _MoreScreenState extends State<MoreScreen> {
               await barcodeScan(context);
             },
             child: Text('Проверка без гашения',
+                style: Styles.bodyTextStyle1.copyWith(
+                  color: Styles.primaryColor,
+                )),
+          ),
+          TextButton(
+            onPressed: () async {
+              final data = await rootBundle.load('assets/sample.csv');
+              final buffer = data.buffer;
+              await Share.shareXFiles([
+                XFile.fromData(
+                  buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+                  name: 'history.scv',
+                  mimeType: 'text/csv',
+                ),
+              ]);
+            },
+            child: Text('CSV test',
                 style: Styles.bodyTextStyle1.copyWith(
                   color: Styles.primaryColor,
                 )),
