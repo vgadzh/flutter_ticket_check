@@ -174,7 +174,7 @@ class TicketService {
       });
       await insertTicketHistoryRecord(
         ticketNumber: number,
-        text: 'Билет добавлен в базу занных со статусом: $status',
+        text: 'Билет добавлен в базу данных со статусом: $status',
       );
     } catch (e) {
       await insertTicketHistoryRecord(
